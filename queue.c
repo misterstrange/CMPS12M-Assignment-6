@@ -26,13 +26,12 @@ int que [MAXSIZE];
 q_status q_init(void) {
     /* Initialize the queue */
     //int que[ MAXSIZE ];
-    if (nElems == -1) {
-        HEAD = 0;
-        TAIL = 0;
-        nElems = 0;
-        return q_success;
-    }
-    return q_failure;
+
+    HEAD = 0;
+    TAIL = 0;
+    nElems = 0;
+    return q_success;
+
 }
 
 int q_is_Empty(void) {
@@ -69,9 +68,10 @@ q_status q_remove(int *value) {
 
        Returns qSuccess on success.
      */
-    if (q_is_Empty()) {
+    if (q_is_Empty() || value == NULL) {
         return q_failure;
     }
+
     *value = que[HEAD];
     HEAD++;
     if (HEAD == 100) {
@@ -79,6 +79,8 @@ q_status q_remove(int *value) {
     }
     nElems--;
     return q_success;
+
+    return q_failure;
 }
 
 q_status q_peek(int *value) {
@@ -89,7 +91,7 @@ q_status q_peek(int *value) {
 
        Returns qSuccess on success.
      */
-    if (q_is_Empty()) {
+    if (q_is_Empty() || value == NULL) {
         return q_failure;
     }
     *value = que[HEAD];
@@ -206,6 +208,9 @@ char * test_peek(void) {
     mu_assert("destroy", q_destroy() == q_success);
     return NULL;
 }
+
+
+//error here moving /* one test at a time
 
 char * test_peek_two(void) {
     int v;
