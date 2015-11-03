@@ -18,7 +18,7 @@ typedef enum q_status {
 /**** Private variables for queue ****/
 int hd;
 int tl;
-int nElems = -1;
+int nElems;
 int que [MAXSIZE];
 
 /**** Functions on queues ****/
@@ -27,14 +27,18 @@ q_status q_init(void) {
     /* Initialize the queue */
     //int que[ MAXSIZE ];
 
-    HEAD = 0;
-    TAIL = 0;
-    nElems = 0;
+    HEAD = 0; //keeps track of front of line
+    TAIL = 0; //keeps track of back of line
+    nElems = 0; //keeps track of number of elements
     return q_success;
 
 }
 
 int q_is_Empty(void) {
+    /*checks to see if the array has any elements
+     
+       returns 1 if empty
+     */
     if (nElems == 0) {
         return 1;
     }
@@ -49,15 +53,15 @@ q_status q_insert(int value) {
     if (nElems < 100) {
         que[TAIL] = value;
         TAIL++;
-        if (TAIL == 100) {
+        if (TAIL == 100) { //once TAIl reaches end, goes to pos 0, given enough space is available
             TAIL = 0;
         }
         nElems++;
         return q_success;
-    } else {
-
-        return q_failure;
     }
+
+    return q_failure;
+
 }
 
 q_status q_remove(int *value) {
@@ -74,13 +78,11 @@ q_status q_remove(int *value) {
 
     *value = que[HEAD];
     HEAD++;
-    if (HEAD == 100) {
+    if (HEAD == 100) {//once HEAD reaches end, goes to pos 0, given enough space is available
         HEAD = 0;
     }
     nElems--;
     return q_success;
-
-    return q_failure;
 }
 
 q_status q_peek(int *value) {
@@ -102,7 +104,7 @@ q_status q_destroy(void) {
     /* Destroy the queue */
     HEAD = 0;
     TAIL = 0;
-    nElems = -1;
+    nElems = 0;
     return q_success;
 }
 
@@ -285,6 +287,23 @@ char * test_insert_remove_three(void) {
     return NULL;
 }
 
+char * test_empty_true(void) {
+    int v;
+    mu_assert("init", q_init() == q_success);
+    mu_assert("insert", q_insert(20) == q_success);
+    mu_assert("remove", q_remove(&v) == q_success);
+    mu_assert("is_empty", q_is_Empty() == 1);
+    return NULL;
+}
+
+char * test_empty_false(void) {
+    mu_assert("init", q_init() == q_success);
+    mu_assert("insert", q_insert(67) == q_success);
+    mu_assert("is_empty", q_is_Empty() == 0);
+    return NULL;
+}
+/*----------------END OF ADDED TESTS-------------*/
+
 char * all_tests(void) {
     /* Run all unit tests */
     mu_run_test(test_lifecycle);
@@ -303,6 +322,8 @@ char * all_tests(void) {
     mu_run_test(test_remove_null);
     mu_run_test(test_peek_null);
     mu_run_test(test_insert_remove_three);
+    mu_run_test(test_empty_true);
+    mu_run_test(test_empty_false);
     return NULL;
 }
 

@@ -1,0 +1,11 @@
+#C program that creates and tests a circular que class.
+#"make queue" creates an executable "queue"
+#running queue runs all the tests.
+#"make spotless" cleans up all generated files.
+#
+#FILES CONTAINED IN ZIP:
+#    MakeFile
+#    minunit.h
+#    queue.c
+#    README
+
