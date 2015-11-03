@@ -5,7 +5,7 @@
 
 #define MAXSIZE 100
 #define HEAD hd
-#define Tail tl
+#define TAIL tl
 
 int tests_run = 0; // keep track of number of unit tests run
 
@@ -18,23 +18,47 @@ typedef enum q_status {
 /**** Private variables for queue ****/
 int hd;
 int tl;
+int nElems = -1;
+int que [MAXSIZE];
 
 /**** Functions on queues ****/
 
 q_status q_init(void) {
     /* Initialize the queue */
-    int que[ MAXSIZE ];
-    HEAD = 0;
-    Tail = 0;
+    //int que[ MAXSIZE ];
+    if (nElems == -1) {
+        HEAD = 0;
+        TAIL = 0;
+        nElems = 0;
+        return q_success;
+    }
     return q_failure;
+}
+
+int q_is_Empty(void) {
+    if (nElems == 0) {
+        return 1;
+    }
+    return 0;
 }
 
 q_status q_insert(int value) {
     /* Insert an item into back of queue
     
        Returns q_success on success.
-    */
-    return q_failure;
+     */
+    if (nElems < 100) {
+        que[TAIL] = value;
+        TAIL++;
+        if (TAIL == 100) {
+            TAIL = 0;
+        }
+        nElems++;
+        return q_success;
+    } else {
+
+        return q_failure;
+    }
 }
 
 q_status q_remove(int *value) {
@@ -44,8 +68,17 @@ q_status q_remove(int *value) {
        given as argument. Removes item from queue.
 
        Returns qSuccess on success.
-    */
-    return q_failure;
+     */
+    if (q_is_Empty()) {
+        return q_failure;
+    }
+    *value = que[HEAD];
+    HEAD++;
+    if (HEAD == 100) {
+        HEAD = 0;
+    }
+    nElems--;
+    return q_success;
 }
 
 q_status q_peek(int *value) {
@@ -55,13 +88,20 @@ q_status q_peek(int *value) {
        given as argument. Queue is not altered.
 
        Returns qSuccess on success.
-    */
-    return q_failure;
+     */
+    if (q_is_Empty()) {
+        return q_failure;
+    }
+    *value = que[HEAD];
+    return q_success;
 }
 
 q_status q_destroy(void) {
     /* Destroy the queue */
-    return q_failure;
+    HEAD = 0;
+    TAIL = 0;
+    nElems = -1;
+    return q_success;
 }
 
 /**** Unit tests ****/
@@ -107,7 +147,7 @@ char * test_multi_insert_remove(void) {
     mu_assert("init", q_init() == q_success);
     mu_assert("insert", q_insert(8) == q_success);
     mu_assert("insert", q_insert(91) == q_success);
-    for(int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
         mu_assert("insert", q_insert(8) == q_success);
         mu_assert("insert", q_insert(91) == q_success);
         mu_assert("remove", q_remove(&v) == q_success);
@@ -124,10 +164,10 @@ char * test_multi_insert_remove(void) {
 char * test_indexed_insert_remove(void) {
     int v;
     mu_assert("init", q_init() == q_success);
-    for(int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         mu_assert("insert", q_insert(i) == q_success);
     }
-    for(int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
         mu_assert("remove", q_remove(&v) == q_success);
         mu_assert("value", v == i);
         mu_assert("insert", q_insert(30 + i) == q_success);
@@ -146,10 +186,10 @@ char * test_too_many_remove(void) {
 char * test_insert_too_many_remove(void) {
     int v;
     mu_assert("init", q_init() == q_success);
-    for(int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         mu_assert("insert", q_insert(i) == q_success);
     }
-    for(int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         mu_assert("remove", q_remove(&v) == q_success);
         mu_assert("value", v == i);
     }
@@ -181,10 +221,10 @@ char * test_peek_two(void) {
 char * test_peek_deep(void) {
     int v;
     mu_assert("init", q_init() == q_success);
-    for(int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; i++) {
         mu_assert("insert", q_insert(i) == q_success);
     }
-    for(int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; i++) {
         mu_assert("peek", q_peek(&v) == q_success);
         mu_assert("value", v == i);
         mu_assert("remove", q_remove(&v) == q_success);
