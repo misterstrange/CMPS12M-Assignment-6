@@ -209,9 +209,6 @@ char * test_peek(void) {
     return NULL;
 }
 
-
-//error here moving /* one test at a time
-
 char * test_peek_two(void) {
     int v;
     mu_assert("init", q_init() == q_success);
@@ -272,6 +269,22 @@ char * test_peek_null(void) {
     return NULL;
 }
 
+/*------------- ADDED TESTS BELOW-------------------*/
+char * test_insert_remove_three(void) {
+    int v;
+    mu_assert("init", q_init() == q_success);
+    mu_assert("insert", q_insert(8) == q_success);
+    mu_assert("insert", q_insert(91) == q_success);
+    mu_assert("insert", q_insert(10) == q_success);
+    mu_assert("remove", q_remove(&v) == q_success);
+    mu_assert("value", v == 8);
+    mu_assert("remove", q_remove(&v) == q_success);
+    mu_assert("value", v == 91);
+    mu_assert("remove", q_remove(&v) == q_success);
+    mu_assert("value", v == 10);
+    return NULL;
+}
+
 char * all_tests(void) {
     /* Run all unit tests */
     mu_run_test(test_lifecycle);
@@ -289,6 +302,7 @@ char * all_tests(void) {
     mu_run_test(test_peek_two_empty);
     mu_run_test(test_remove_null);
     mu_run_test(test_peek_null);
+    mu_run_test(test_insert_remove_three);
     return NULL;
 }
 
